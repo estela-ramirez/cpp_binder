@@ -1,5 +1,19 @@
 #include "Playlist.cpp"
+// how to set netNodePtr as nullptr in setNext(), Playlist.cpp , template?
+// removeSong()
+// changePosition()
 
+bool bufferIsClear = true;
+
+// if cin >> has been used, the buffer will be cleared of the \n
+void checkBuffer(){
+    if (!bufferIsClear){
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        bufferIsClear = true;
+    }
+}
+
+// returns true if choice is within the valid choices
 bool validateChoice(const char choice, const string validChoices){
     for (int i = 0; i < validChoices.length(); i++){
         if (choice == validChoices[i]){
@@ -9,6 +23,7 @@ bool validateChoice(const char choice, const string validChoices){
     return false;
 }
 
+//prints menu with options
 void printMenu(const string playlistTitle){
     cout << playlistTitle << " PLAYLIST MENU" << endl;
     cout << "a - Add song" << endl;
@@ -21,35 +36,43 @@ void printMenu(const string playlistTitle){
     cout << "\nChoose an option:" << endl;
 }
 
+// asks user for unique ID
 string askForID(){
     string id;
     cout << "Enter song's unique ID:" << endl;
+    checkBuffer();;
     getline(cin, id);
     return id;
 }
 
+// asks user for song name
 string askForSongName(){
     string songName;
     cout << "Enter song's name:" << endl;
+    checkBuffer();
     getline(cin, songName);
     return songName;
 }
 
+// asks user for an artist name
 string askForArtistName(){
     string artistName;
     cout << "Enter artist's name:" << endl;
+    checkBuffer();
     getline(cin, artistName);
     return artistName;
 }
 
+// asks user for length of song in (sec)
 int askForLength(){
     int length;
     cout << "Enter song's length (in seconds):" << endl;
     cin >> length;
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    bufferIsClear = false;
     return length;
 }
 
+// creates new PlaylistNode and adds it to the end of the list
 void addSong(PlayListNode* &head, PlayListNode* &tail){
     PlayListNode* newNode;
 
@@ -69,7 +92,7 @@ void addSong(PlayListNode* &head, PlayListNode* &tail){
 
 }
 
-
+//COMMENT
 // void removeSong(PlayListNode* &head, PlayListNode* &tail, const string uniqueID){
 //     PlayListNode* curr = head;
 //     PlayListNode* delNode = nullptr;
@@ -106,6 +129,8 @@ void addSong(PlayListNode* &head, PlayListNode* &tail){
 //     }
 // }
 
+
+//COMMENT
 // void changePosition(PlayListNode* head, PlayListNode* tail){
 //     cout << "CHANGE POSITION OF SONG" << endl;
 //     PlayListNode* curr = head;
@@ -117,7 +142,7 @@ void addSong(PlayListNode* &head, PlayListNode* &tail){
 //     cin >> currPos;
 //     cout << "Enter new position for song:" << endl;
 //     cin >> nextPos;
-//     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+//     bufferIsClear = false;
    
 
 //     //"Canned Heat" moved to position 2
@@ -134,6 +159,7 @@ void addSong(PlayListNode* &head, PlayListNode* &tail){
 // }
 
 
+// finds every PlayListNode that has matching artistName, prints out its data
 void outputSongs(PlayListNode* &head, const string artistName){
     PlayListNode* curr = head;
     int counter = 1;
@@ -160,6 +186,7 @@ void outputSongs(PlayListNode* &head, const string artistName){
     }
 }
 
+// adds up all PlayListNode's lengths (Playlist's total time) and prints it out
 void outputTime(PlayListNode* &head){
     cout << "OUTPUT TOTAL TIME OF PLAYLIST (IN SECONDS)" << endl << endl;
     PlayListNode* curr = head;
@@ -173,6 +200,7 @@ void outputTime(PlayListNode* &head){
 
 }
 
+// outputs every playListNode in the list
 void outputPlaylist(PlayListNode* &head, const string playlistTitle){
     PlayListNode* curr = head;
     int counter = 1;
@@ -194,6 +222,7 @@ void outputPlaylist(PlayListNode* &head, const string playlistTitle){
     }
 }
 
+// calls method corresponding to user choice
 void executeChoice(const char choice, PlayListNode* &head, PlayListNode* &tail, const string playlistTitle){
     if (choice == 'a'){
         addSong(head, tail);
@@ -220,15 +249,6 @@ int main(void){
     PlayListNode* head = nullptr;
     PlayListNode* tail = nullptr;
 
-    //TEST
-    // addSong(head, tail);
-    // addSong(head, tail);
-    // addSong(head, tail);
-
-    // outputPlaylist(head, "h");
-    // //removeSong(head, tail, askForID());
-    // outputPlaylist(head, "h");
-
     string playlistTitle;
     string validChoices = "adcstoq";
     char choice;
@@ -237,9 +257,10 @@ int main(void){
     printMenu(playlistTitle);
     cin >> choice;
 
+    // will ask user for choice until valid, executes the choice, printsMenu
     while (choice != 'q'){
         if (validateChoice(choice, validChoices)){
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            bufferIsClear = false;
             executeChoice(choice, head, tail, playlistTitle);
             printMenu(playlistTitle);
             cin >> choice;
@@ -248,7 +269,5 @@ int main(void){
             cin >> choice;
         }
     }
-
     return 0;
-
 }

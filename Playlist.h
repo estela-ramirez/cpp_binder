@@ -20,6 +20,8 @@ class PlayListNode{
         inline PlayListNode* GetNext()const {return nextNodePtr;}
 
         PlayListNode* InsertAfter(PlayListNode* node);
+
+        // how to set netNodePtr as nullptr
         void SetNext(PlayListNode* &nextNode);
         void PrintPlaylistNode()const;
     

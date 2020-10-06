@@ -10,6 +10,8 @@ PlayListNode* PlayListNode::InsertAfter(PlayListNode* node){
 
 }
 
+// how to set netNodePtr as nullptr
+// parameter is reference to a (pointer to a PlayListNode) in order to update the list 
 void PlayListNode::SetNext(PlayListNode* &nextNode){
     nextNodePtr =  nextNode;
 }
