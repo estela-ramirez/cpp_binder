@@ -4,7 +4,7 @@ PlayListNode::PlayListNode():uniqueID("none"), songName("none"), artistName("non
         songLength(0), nextNodePtr(0){}
 
 PlayListNode::PlayListNode(string uniqueID, string songName, string artistName, int songLength, PlayListNode* nextNodePtr):uniqueID(uniqueID), songName(songName), artistName(artistName), 
-        songLength(songLength), nextNodePtr(nextNodePtr){cout << "created newNODE" << endl;}
+        songLength(songLength), nextNodePtr(nextNodePtr){}
 
 void PlayListNode::InsertAfter(PlayListNode* node){
     
@@ -14,9 +14,12 @@ void PlayListNode::InsertAfter(PlayListNode* node){
 // parameter is reference to a (pointer to a PlayListNode) in order to update the list 
 void PlayListNode::SetNext(PlayListNode* &nextNode){
     nextNodePtr =  nextNode;
-    cout << "added node address = " << nextNode << endl;
 }
 
+void PlayListNode::SetNext(){
+    nextNodePtr =  0;
+   
+}
 
 void PlayListNode::PrintPlaylistNode()const{
     cout << "Unique ID: " << uniqueID << endl;

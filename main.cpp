@@ -1,15 +1,7 @@
 #include "Playlist.cpp"
-// ?? do we need to check that id is unique?
-
-// how to set netNodePtr as nullptr in setNext(), Playlist.cpp , template?
-// ?? removeSong() can I have an additional method in the class declaration to set 
-// the nextNodeptr to nullptr else use template?
-
-
 // FIX
 // ?? ask for length -> handle it being a char?  // ?? not handling exception
 // changePosition()
-
 
 bool bufferIsClear = true;
 
@@ -71,6 +63,7 @@ string askForArtistName(){
     return artistName;
 }
 
+//FIX
 // asks user for length of song in (sec)
 int askForLength(){
     int length;
@@ -92,10 +85,8 @@ void addSong(PlayListNode* &head, PlayListNode* &tail){
     PlayListNode* newNode;
 
     newNode = new PlayListNode(askForID(), askForSongName(), 
-            askForArtistName(), askForLength(), nullptr);
-    cout << "adding this node " << newNode << endl;
-
-    if (head == nullptr){
+            askForArtistName(), askForLength(), 0);
+    if (head == 0){
         head = newNode;
         tail = newNode;
     }else{
@@ -107,24 +98,24 @@ void addSong(PlayListNode* &head, PlayListNode* &tail){
 //TO DO: COMMENT
 void removeSong(PlayListNode* &head, PlayListNode* &tail, const string uniqueID){
     PlayListNode* curr = head;
-    PlayListNode* next = nullptr;
-    PlayListNode* delNode = nullptr;
+    PlayListNode* next = 0;
+    PlayListNode* delNode = 0;
     cout << "REMOVE SONG" << endl;
 
-    if (curr == nullptr) {
+    if (curr == 0) {
         cout << "NO SONGS TO DELETE " << endl;
         return;
     }else if (uniqueID.compare(curr->GetID()) == 0){        //HEAD
         next = curr->GetNext();                             // the next node
 
-        if (next == nullptr){                               //deleted only one in list
-            head = nullptr;
-            tail = nullptr;
+        if (next == 0){                               //deleted only one in list
+            head = 0;
+            tail = 0;
         }else{
-            head = next;                                    
-            curr->SetNextAsNull();                          
+            head = next;                                     
+            curr->SetNext();                        
         }
-        cout << curr->GetSongName() << " removed" << endl;
+        cout << curr->GetSongName() << " removed\n" << endl;
         delete curr;
 
     }else{
@@ -133,16 +124,15 @@ void removeSong(PlayListNode* &head, PlayListNode* &tail, const string uniqueID)
                 
                 delNode = curr->GetNext();
   
-                if (delNode->GetNext() != nullptr){         //MIDDLE
+                if (delNode->GetNext() != 0){           //MIDDLE
                     next = delNode->GetNext();
                     curr->SetNext(next);                    //??? why can't I put delNode->GetNext() directly
-                                                            // initial value of reference to non-const must be an lvalue
-                    delNode->SetNextAsNull();
+                    delNode->SetNext();
                 }else{
-                    curr->SetNextAsNull();                  //TAIL
+                    curr->SetNext();                       //TAIL
                     tail = curr;
                 }
-                cout << delNode->GetSongName() << " removed" << endl;
+                cout << delNode->GetSongName() << " removed\n" << endl;
                 delete delNode;
                 break;                                      // only if you don't allow overlapping id's
             }
@@ -169,7 +159,7 @@ void removeSong(PlayListNode* &head, PlayListNode* &tail, const string uniqueID)
 
 //     //"Canned Heat" moved to position 2
 
-//     if (curr == nullptr){return;}
+//     if (curr == 0){return;}
 //     //FRONT
 //     if (currPos == 1){
 
@@ -186,10 +176,10 @@ void outputSongs(PlayListNode* &head, const string artistName){
     PlayListNode* curr = head;
     int counter = 1;
     bool found = false;
-    if (head == nullptr){
-        cout << "No songs by: " << artistName << endl << endl;
+    if (head == 0){
+        cout << "No songs by: " << artistName << endl;
     }else{
-        while (curr != nullptr){
+        while (curr != 0){
             if (artistName.compare(curr->GetArtistName()) == 0){
                 found = true;
     
@@ -204,16 +194,15 @@ void outputSongs(PlayListNode* &head, const string artistName){
         if(!found){
             cout << "No songs by: " << artistName << endl;
         }
-        cout << endl;
     }
 }
 
 // adds up all PlayListNode's lengths (Playlist's total time) and prints it out
 void outputTime(PlayListNode* &head){
-    cout << "OUTPUT TOTAL TIME OF PLAYLIST (IN SECONDS)" << endl << endl;
+    cout << "OUTPUT TOTAL TIME OF PLAYLIST (IN SECONDS)" << endl;
     PlayListNode* curr = head;
     int total = 0;
-    while (curr!= nullptr){
+    while (curr!= 0){
         total += curr->GetSongLength();
         curr = curr->GetNext();
     }
@@ -226,17 +215,16 @@ void outputTime(PlayListNode* &head){
 void outputPlaylist(PlayListNode* &head, const string playlistTitle){
     PlayListNode* curr = head;
     int counter = 1;
-    if (head == NULL){
+    if (head == 0){
         cout << "Playlist is empty" << endl << endl;
     }else{
         cout << playlistTitle<<" - OUTPUT FULL PLAYLIST" << endl;
         
-        while (curr != nullptr){
+        while (curr != 0){
             if (counter > 1){
                 cout << endl;
             }
             cout << counter << "." << endl;
-            cout << "----- " << curr << endl;
             curr->PrintPlaylistNode();
             counter++;
             curr = curr->GetNext();
@@ -269,8 +257,8 @@ void executeChoice(const char choice, PlayListNode* &head, PlayListNode* &tail, 
 int main(void){
 
 
-    PlayListNode* head = nullptr;
-    PlayListNode* tail = nullptr;
+    PlayListNode* head = 0;
+    PlayListNode* tail = 0;
 
     string playlistTitle;
     string validChoices = "adcstoq";

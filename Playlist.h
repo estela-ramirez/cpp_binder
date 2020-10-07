@@ -19,13 +19,12 @@ class PlayListNode{
         inline int GetSongLength()const {return songLength;}
         inline PlayListNode* GetNext()const {return nextNodePtr;}
 
-        void SetNextAsNull(){nextNodePtr = nullptr;}  // ??? is helper allowed? or need template
-
         void InsertAfter(PlayListNode* node);
 
         // how to set netNodePtr as nullptr
-        void SetNext(PlayListNode* &nextNode);
+        void SetNext(PlayListNode* &nextNode);  // can set to 0
         
+        void SetNext();
 
         void PrintPlaylistNode()const;
     
