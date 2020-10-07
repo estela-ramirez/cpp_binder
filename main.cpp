@@ -1,7 +1,15 @@
 #include "Playlist.cpp"
+// ?? do we need to check that id is unique?
+
 // how to set netNodePtr as nullptr in setNext(), Playlist.cpp , template?
-// removeSong()
+// ?? removeSong() can I have an additional method in the class declaration to set 
+// the nextNodeptr to nullptr else use template?
+
+
+// FIX
+// ?? ask for length -> handle it being a char?  // ?? not handling exception
 // changePosition()
+
 
 bool bufferIsClear = true;
 
@@ -66,8 +74,15 @@ string askForArtistName(){
 // asks user for length of song in (sec)
 int askForLength(){
     int length;
+
     cout << "Enter song's length (in seconds):" << endl;
-    cin >> length;
+    try{                                                // not catching exception
+        cin >> length;
+    }catch(exception length){
+        cout << "Default length set to 180 seconds" << endl;   
+    }
+
+    length = 180;
     bufferIsClear = false;
     return length;
 }
@@ -76,11 +91,10 @@ int askForLength(){
 void addSong(PlayListNode* &head, PlayListNode* &tail){
     PlayListNode* newNode;
 
-    cout << "ADD SONG" << endl;
-
     newNode = new PlayListNode(askForID(), askForSongName(), 
             askForArtistName(), askForLength(), nullptr);
-    
+    cout << "adding this node " << newNode << endl;
+
     if (head == nullptr){
         head = newNode;
         tail = newNode;
@@ -88,46 +102,54 @@ void addSong(PlayListNode* &head, PlayListNode* &tail){
         tail->SetNext(newNode); 
         tail = newNode;
     }
-    
-
 }
 
-//COMMENT
-// void removeSong(PlayListNode* &head, PlayListNode* &tail, const string uniqueID){
-//     PlayListNode* curr = head;
-//     PlayListNode* delNode = nullptr;
-//     cout << "REMOVE SONG" << endl;
+//TO DO: COMMENT
+void removeSong(PlayListNode* &head, PlayListNode* &tail, const string uniqueID){
+    PlayListNode* curr = head;
+    PlayListNode* next = nullptr;
+    PlayListNode* delNode = nullptr;
+    cout << "REMOVE SONG" << endl;
 
-//     if (curr == nullptr) {
-//         return;
-//     }else if (uniqueID.compare(curr->GetID())){  //FRONT
-//         delNode = curr;
-//         head->SetNext(curr->GetNext()); 
-//         curr->SetNext(nullptr); //
-//         delete delNode;
-//         if (head == nullptr){ //deleted last one in list
-//             tail = nullptr;
-//         }
+    if (curr == nullptr) {
+        cout << "NO SONGS TO DELETE " << endl;
+        return;
+    }else if (uniqueID.compare(curr->GetID()) == 0){        //HEAD
+        next = curr->GetNext();                             // the next node
 
-//     }else{
-//         while (curr!= tail){
-//             if (uniqueID.compare(curr->GetNext()->GetID())){
+        if (next == nullptr){                               //deleted only one in list
+            head = nullptr;
+            tail = nullptr;
+        }else{
+            head = next;                                    
+            curr->SetNextAsNull();                          
+        }
+        cout << curr->GetSongName() << " removed" << endl;
+        delete curr;
+
+    }else{
+        while (curr!= tail){
+            if (uniqueID.compare(curr->GetNext()->GetID()) == 0){
                 
-//                 delNode = curr->GetNext();// delete this node
+                delNode = curr->GetNext();
   
-//                 if (delNode->GetNext() != nullptr){
-//                     curr->SetNext(delNode->GetNext());
-//                     delNode->SetNext(nullptr);
-//                 }else{
-//                     curr->SetNext(nullptr);
-//                     tail = curr;
-//                 }
-//                 delete delNode;
-//             }
-//             curr = curr->GetNext(); 
-//         }
-//     }
-// }
+                if (delNode->GetNext() != nullptr){         //MIDDLE
+                    next = delNode->GetNext();
+                    curr->SetNext(next);                    //??? why can't I put delNode->GetNext() directly
+                                                            // initial value of reference to non-const must be an lvalue
+                    delNode->SetNextAsNull();
+                }else{
+                    curr->SetNextAsNull();                  //TAIL
+                    tail = curr;
+                }
+                cout << delNode->GetSongName() << " removed" << endl;
+                delete delNode;
+                break;                                      // only if you don't allow overlapping id's
+            }
+            curr = curr->GetNext(); 
+        }
+    }
+}
 
 
 //COMMENT
@@ -214,6 +236,7 @@ void outputPlaylist(PlayListNode* &head, const string playlistTitle){
                 cout << endl;
             }
             cout << counter << "." << endl;
+            cout << "----- " << curr << endl;
             curr->PrintPlaylistNode();
             counter++;
             curr = curr->GetNext();
@@ -226,8 +249,8 @@ void outputPlaylist(PlayListNode* &head, const string playlistTitle){
 void executeChoice(const char choice, PlayListNode* &head, PlayListNode* &tail, const string playlistTitle){
     if (choice == 'a'){
         addSong(head, tail);
-    // }else if (choice == 'r'){
-    //     removeSong(head, tail, askForID());
+    }else if (choice == 'd'){
+        removeSong(head, tail, askForID());
         
     }else if (choice == 's'){
         cout << "OUTPUT SONGS BY SPECIFIC ARTIST" << endl;
