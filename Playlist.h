@@ -11,6 +11,7 @@ class PlayListNode{
     public:
         PlayListNode();
     
+        //FIX set default ptr to 0
         PlayListNode(string uniqueID, string songName, string artistName, int songLength, PlayListNode* nextNodePtr);
     
         inline string GetID()const {return uniqueID;}
@@ -19,7 +20,7 @@ class PlayListNode{
         inline int GetSongLength()const {return songLength;}
         inline PlayListNode* GetNext()const {return nextNodePtr;}
 
-        void InsertAfter(PlayListNode* node);
+        void InsertAfter(PlayListNode* &node);
 
         // how to set netNodePtr as nullptr
         void SetNext(PlayListNode* &nextNode);  // can set to 0

@@ -71,11 +71,11 @@ int askForLength(){
     cout << "Enter song's length (in seconds):" << endl;
     try{                                                // not catching exception
         cin >> length;
-    }catch(exception length){
+    }catch(int length){
         cout << "Default length set to 180 seconds" << endl;   
+        length = 100;
     }
 
-    length = 180;
     bufferIsClear = false;
     return length;
 }
@@ -141,34 +141,154 @@ void removeSong(PlayListNode* &head, PlayListNode* &tail, const string uniqueID)
     }
 }
 
+// return the total number of nodes in the Playlist
+int getNumberOfNodes(PlayListNode* &head){
+    PlayListNode* curr = head;
+    int counter = 0;
+    while (curr!= 0){
+        counter++;
+        curr = curr->GetNext();
+    }
 
-//COMMENT
-// void changePosition(PlayListNode* head, PlayListNode* tail){
-//     cout << "CHANGE POSITION OF SONG" << endl;
-//     PlayListNode* curr = head;
-//     int currPos, nextPos = -1;
-//     int counter = 1;
-//     //pos less than 1 (move) to head, greater than n (move) to tail
+    return counter;
+}
 
-//     cout << "Enter song's current position:" << endl;
-//     cin >> currPos;
-//     cout << "Enter new position for song:" << endl;
-//     cin >> nextPos;
-//     bufferIsClear = false;
-   
+/*asks user for the currPos (position of node you want to move)
+and nextPos (position to move node to) **/
+void askForPositions(int &currPos, int &nextPos){
+    cout << "CHANGE POSITION OF SONG" << endl;
+    cout << "Enter song's current position:" << endl;
+    checkBuffer();
+    cin >> currPos;
+    cout << "Enter new position for song:" << endl;
+    cin >> nextPos;
+    bufferIsClear = false;
+}
 
-//     //"Canned Heat" moved to position 2
+//if pos less than 1 (move) to head, greater than n (move) to tail 
+void checkPositions(int &currPos, int &nextPos, const int n){
+    if (nextPos < 1){nextPos = 1;}
+    if (nextPos > n){nextPos = n;}
+    if ((currPos > n) || (currPos < 1)){currPos = -1;}
+    cout << "check positions  currPos: " << currPos << " nextPos: " << nextPos << endl;
+}
 
-//     if (curr == 0){return;}
-//     //FRONT
-//     if (currPos == 1){
+// returns the node at position pos
+PlayListNode* getNode(PlayListNode* &head, int pos){
+    PlayListNode* curr = head;
 
-//     }
+    for (int i = 0; i < pos; i++){
+        curr = curr->GetNext();
+    }
 
-//     //MIDDLE
+    return curr;
+}
 
-//     //END
-// }
+// will return the node accoding to it's position in the list 
+PlayListNode* getMoveToNode(PlayListNode* &head, PlayListNode* &tail, const int n, const int nextPos){
+    PlayListNode* moveTo = 0;
+    if (nextPos == 1){
+        moveTo = head;
+    }else if (nextPos == n){
+        moveTo = tail;
+    }else {
+        moveTo = getNode(head, nextPos-1);   
+    }
+
+    return moveTo;
+}
+
+    //"Canned Heat" moved to position 2
+    // Moving the head node (1 pt)
+    // Moving the tail node (1 pt)
+    // Moving a node to the head (1 pt)
+    // Moving a node to the tail (1 pt)
+    // Moving a node up the list (1 pt)
+    // Moving a node down the list (1 pt)
+void changePosition(PlayListNode* &head, PlayListNode* &tail){
+    PlayListNode* moveNode = head;
+    PlayListNode* moveTo = head;
+    PlayListNode* prev = head;
+    int currPos = -1;
+    int nextPos = -1;
+    cout << "getting number of noedes"  << endl;
+    int n = getNumberOfNodes(head);
+
+    cout << "n == " << n << endl;
+    askForPositions(currPos, nextPos);
+    checkPositions(currPos, nextPos, n);
+    cout << "2. current and nextPos === " << currPos << ", " << nextPos << endl;
+
+    // if no nodes, positons same, no node in that pos return
+    if (head == 0 || (currPos == -1) || (currPos == nextPos)){return;}  
+
+    if (currPos == 1){                      // MOVE HEAD
+        moveNode = head;
+        moveTo = getNode(head, nextPos-1);
+        
+        head = head->GetNext();
+        moveNode->SetNext();                
+        moveTo->InsertAfter(moveNode);
+
+        if (nextPos == n){tail = moveNode;}
+
+    }else if (currPos == n){               // MOVE TAIL   
+        PlayListNode* newTail = moveTo;
+
+        moveNode = tail;
+        newTail = getNode(head, n-2);
+
+        // update tail
+        newTail->SetNext();
+        tail = newTail;
+
+        if (nextPos == 1){                              // move tail to head
+            moveNode->SetNext(head);            
+            head = moveNode;
+        }else{                                          // move tail in between nodes
+            prev = getNode(head, nextPos -2);          // previous of node positions to move to 
+            prev->InsertAfter(moveNode);              // move old tail to nextPos
+        }
+    }else{                                              // MOVE MIDDLE NODE 
+        PlayListNode* next = 0;
+
+        prev = getNode(head, currPos-2);                // prev of moveNode node
+        moveNode = prev->GetNext();
+
+        moveTo = getMoveToNode(head, tail, n, nextPos);
+
+        cout << "prev = " << prev->GetID() << endl;
+        cout << "moveNode = " << moveNode->GetID() << endl;
+        cout << "moveTo = " << moveTo->GetID() << endl;
+
+        next = moveNode->GetNext();
+        cout << "next = " << next->GetID() << endl;
+
+        prev->SetNext(next);
+        moveNode->SetNext();
+        cout << "prev->next = " << (prev->GetNext())->GetID() << endl;   
+
+        if (nextPos == 1){                              // move to head
+            moveNode->SetNext(head);
+            cout << "moveNode next = " << (moveNode->GetNext())->GetID() << endl;
+            head = moveNode;
+            cout << "head = " << head->GetID() << endl;
+            cout << "tail = " << tail->GetID() << endl;
+            }
+
+        if (nextPos == n){                              // move to tail
+            tail->InsertAfter(moveNode);
+            tail = moveNode;}
+
+        if (nextPos > currPos){                         // move down list
+            moveTo->InsertAfter(moveNode);} 
+
+        if (nextPos < currPos){                         //move up list
+            prev = getNode(head, nextPos -2);          // prev of moveTo node
+            prev->InsertAfter(moveNode);}
+    }
+    cout << "\"" << moveNode->GetSongName() << "\"" << " moved to position " << nextPos << endl;
+}
 
 
 // finds every PlayListNode that has matching artistName, prints out its data
@@ -235,6 +355,7 @@ void outputPlaylist(PlayListNode* &head, const string playlistTitle){
 
 // calls method corresponding to user choice
 void executeChoice(const char choice, PlayListNode* &head, PlayListNode* &tail, const string playlistTitle){
+    cout << "choice = " << choice << endl;
     if (choice == 'a'){
         addSong(head, tail);
     }else if (choice == 'd'){
@@ -245,13 +366,11 @@ void executeChoice(const char choice, PlayListNode* &head, PlayListNode* &tail, 
         outputSongs(head, askForArtistName());
     }else if (choice == 't'){
         outputTime(head);
+    }else if (choice == 'c'){
+        changePosition(head, tail);
     }else{
         outputPlaylist(head, playlistTitle);
     }
-
-    // else if (choice == 'c'){
-    //     changePosition(head, tail);
-    // }
 }
 
 int main(void){
