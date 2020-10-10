@@ -1,6 +1,4 @@
-#ifndef PLAYLIST_H
-#define PLAYLIST_H
-
+#pragma once
 #include <iostream>
 #include <string>
 using namespace std;
@@ -22,7 +20,6 @@ class PlayListNode{
 
         void InsertAfter(PlayListNode* &node);
 
-        // how to set netNodePtr as nullptr
         void SetNext(PlayListNode* &nextNode);  // can set to 0
         
         void SetNext();
@@ -37,5 +34,3 @@ class PlayListNode{
         PlayListNode* nextNodePtr;
     
 };
-
-#endif

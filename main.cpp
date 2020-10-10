@@ -1,4 +1,6 @@
-#include "Playlist.cpp"
+#include "Playlist.h"
+#include <limits>
+
 // FIX
 // ?? ask for length -> handle it being a char?  // ?? not handling exception
 // changePosition()
@@ -14,8 +16,8 @@ void checkBuffer(){
 }
 
 // returns true if choice is within the valid choices
-bool validateChoice(const char choice, const string validChoices){
-    for (int i = 0; i < validChoices.length(); i++){
+bool validateChoice(const char choice, const char * validChoices, int size){
+    for (int i = 0; i < size; i++){
         if (choice == validChoices[i]){
             return true;
         }       
@@ -257,23 +259,23 @@ void changePosition(PlayListNode* &head, PlayListNode* &tail){
 
         moveTo = getMoveToNode(head, tail, n, nextPos);
 
-        cout << "prev = " << prev->GetID() << endl;
-        cout << "moveNode = " << moveNode->GetID() << endl;
-        cout << "moveTo = " << moveTo->GetID() << endl;
+        // cout << "prev = " << prev->GetID() << endl;
+        // cout << "moveNode = " << moveNode->GetID() << endl;
+        // cout << "moveTo = " << moveTo->GetID() << endl;
 
         next = moveNode->GetNext();
-        cout << "next = " << next->GetID() << endl;
+        // cout << "next = " << next->GetID() << endl;
 
         prev->SetNext(next);
         moveNode->SetNext();
-        cout << "prev->next = " << (prev->GetNext())->GetID() << endl;   
+        // cout << "prev->next = " << (prev->GetNext())->GetID() << endl;   
 
         if (nextPos == 1){                              // move to head
             moveNode->SetNext(head);
-            cout << "moveNode next = " << (moveNode->GetNext())->GetID() << endl;
+            // cout << "moveNode next = " << (moveNode->GetNext())->GetID() << endl;
             head = moveNode;
-            cout << "head = " << head->GetID() << endl;
-            cout << "tail = " << tail->GetID() << endl;
+            // cout << "head = " << head->GetID() << endl;
+            // cout << "tail = " << tail->GetID() << endl;
             }
 
         if (nextPos == n){                              // move to tail
@@ -355,7 +357,7 @@ void outputPlaylist(PlayListNode* &head, const string playlistTitle){
 
 // calls method corresponding to user choice
 void executeChoice(const char choice, PlayListNode* &head, PlayListNode* &tail, const string playlistTitle){
-    cout << "choice = " << choice << endl;
+
     if (choice == 'a'){
         addSong(head, tail);
     }else if (choice == 'd'){
@@ -380,7 +382,7 @@ int main(void){
     PlayListNode* tail = 0;
 
     string playlistTitle;
-    string validChoices = "adcstoq";
+    char validChoices[] = {'a', 'd', 'c', 's', 't', 'o', 'q'};
     char choice;
     cout << "Enter playlist's title:" << endl;
     getline(cin, playlistTitle);
@@ -389,7 +391,7 @@ int main(void){
 
     // will ask user for choice until valid, executes the choice, printsMenu
     while (choice != 'q'){
-        if (validateChoice(choice, validChoices)){
+        if (validateChoice(choice, validChoices, 7)){
             bufferIsClear = false;
             executeChoice(choice, head, tail, playlistTitle);
             printMenu(playlistTitle);
